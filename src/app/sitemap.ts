@@ -1,7 +1,6 @@
 import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { submissions } from "@/lib/schema";
-import { sql } from "drizzle-orm";
 
 function getBaseUrl() {
   if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
