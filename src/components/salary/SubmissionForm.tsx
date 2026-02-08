@@ -34,7 +34,7 @@ export function SubmissionForm() {
       salaryMax: 0,
       yearsExp: 0,
       companySize: "51-200",
-      confirmData: false,
+      confirmData: false as unknown as true, // form starts unchecked; schema requires true on submit
     },
   });
 
