@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
 
     revalidatePath("/");
     revalidatePath("/browse");
+    revalidatePath("/api/stats");
 
     return NextResponse.json({ success: true });
   } catch (err) {

@@ -5,7 +5,7 @@ function getBaseUrl() {
 }
 
 type Props = {
-  latest: Array<{
+  latest?: Array<{
     role: string;
     location: string;
     salaryMin: number;
@@ -13,7 +13,7 @@ type Props = {
   }>;
 };
 
-export function HomePageJsonLd({ latest }: Props) {
+export function HomePageJsonLd({ latest = [] }: Props) {
   const baseUrl = getBaseUrl();
   const webSite = {
     "@context": "https://schema.org",

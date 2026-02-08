@@ -100,20 +100,33 @@ export function FilterBar({ role, location, searchParams }: FilterBarProps) {
       <div>
         <label className="text-sm font-medium mb-1 block">Currency</label>
         <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => updateParams({ currency: null })}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              selectedCurrencies.length === 0
+                ? "bg-slate-900 text-white"
+                : "bg-slate-200 text-slate-700 hover:bg-slate-300"
+            }`}
+          >
+            All
+          </button>
           {currencyOptions.map((c) => (
-            <label key={c.value} className="inline-flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={selectedCurrencies.includes(c.value)}
-                onChange={(e) => {
-                  const next = new Set(selectedCurrencies);
-                  if (e.target.checked) next.add(c.value);
-                  else next.delete(c.value);
-                  updateParams({ currency: Array.from(next).join(",") || null });
-                }}
-              />
-              <span className="text-sm">{c.label}</span>
-            </label>
+            <button
+              key={c.value}
+              onClick={() => {
+                const next = new Set(selectedCurrencies);
+                if (next.has(c.value)) next.delete(c.value);
+                else next.add(c.value);
+                updateParams({ currency: Array.from(next).join(",") || null });
+              }}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                selectedCurrencies.includes(c.value)
+                  ? "bg-slate-900 text-white"
+                  : "border border-slate-300 text-slate-700 hover:bg-slate-100"
+              }`}
+            >
+              {c.label}
+            </button>
           ))}
         </div>
       </div>

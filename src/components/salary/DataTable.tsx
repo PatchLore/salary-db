@@ -86,14 +86,15 @@ export async function DataTable({
   const filteredRows = currencyFilters.length > 0 ? rows.filter((r) => currencyFilters.includes(r.currency)) : rows;
 
   return (
-    <div className="rounded-md border mt-6">
-      <Table>
+    <>
+      <div className="rounded-md border mt-6">
+        <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Salary range</TableHead>
-            <TableHead>Years exp</TableHead>
-            <TableHead>Company size</TableHead>
-            <TableHead>Submitted</TableHead>
+          <TableRow className="hover:bg-slate-50 bg-slate-50">
+            <TableHead className="font-semibold text-slate-900">Salary range</TableHead>
+            <TableHead className="font-semibold text-slate-900">Years exp</TableHead>
+            <TableHead className="font-semibold text-slate-900">Company size</TableHead>
+            <TableHead className="font-semibold text-slate-900">Submitted</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -103,15 +104,21 @@ export async function DataTable({
                 No submissions yet. Be the first to submit.
               </TableCell>
             </TableRow>
-            ) : (
-            filteredRows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>
+          ) : filteredRows.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                No salaries match your filters. Try broadening your search.
+              </TableCell>
+            </TableRow>
+          ) : (
+            filteredRows.map((row, idx) => (
+              <TableRow key={row.id} className={`hover:bg-slate-100/50 transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-slate-50/50"}`}>
+                <TableCell className="font-medium text-emerald-600">
                   {currencySymbols[row.currency] ?? ""}{Math.round((row.salaryMin || 0) / 1000)}k - {currencySymbols[row.currency] ?? ""}{Math.round((row.salaryMax || 0) / 1000)}k {row.currency}
                 </TableCell>
                 <TableCell>{row.yearsExp}</TableCell>
                 <TableCell>{row.companySize}</TableCell>
-                <TableCell>
+                <TableCell className="text-slate-500 text-sm">
                   {row.submittedAt
                     ? new Date(row.submittedAt).toLocaleDateString()
                     : "—"}
@@ -122,5 +129,9 @@ export async function DataTable({
         </TableBody>
       </Table>
     </div>
+    <div className="text-xs text-slate-500 mt-3 ml-1">
+      Showing {rows.length > 0 ? offset + 1 : 0}–{Math.min(offset + limit, rows.length + offset)} of approximately {rows.length + offset} submissions
+    </div>
+    </>
   );
 }

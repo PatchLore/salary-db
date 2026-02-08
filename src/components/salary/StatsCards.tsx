@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { submissions } from "@/lib/schema";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, sql, inArray } from "drizzle-orm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type StatsCardsProps = {
@@ -9,7 +9,6 @@ type StatsCardsProps = {
   searchParams?: Record<string, string | string[] | undefined>;
 };
 
-export async function StatsCards({ role, location }: StatsCardsProps) {
 export async function StatsCards({ role, location, searchParams }: StatsCardsProps) {
   const rawCurrency = searchParams?.currency;
   const currencyFilters: string[] = Array.isArray(rawCurrency)
@@ -22,6 +21,9 @@ export async function StatsCards({ role, location, searchParams }: StatsCardsPro
     eq(submissions.role, role),
     eq(submissions.location, location),
   ];
+  if (currencyFilters.length > 0) {
+    conditions.push(inArray(submissions.currency, currencyFilters));
+  }
   const where = and(...conditions);
   // Aggregates
   const [agg] = await db

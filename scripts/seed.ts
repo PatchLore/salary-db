@@ -52,49 +52,52 @@ async function seed() {
 
   const data = [];
 
-  for (let i = 0; i < 50; i++) {
-    const role = roles[i % roles.length];
-    const location = locations[i % locations.length];
-    const yearsExp = Math.floor(Math.random() * 15);
+  // Create 10 entries per location, with 5 different roles (2 each)
+  locations.forEach((location, locationIndex) => {
+    // Pick 5 different roles for this location (cycling through roles array)
+    for (let roleIndex = 0; roleIndex < 5; roleIndex++) {
+      const role = roles[(locationIndex * 5 + roleIndex) % roles.length];
 
-    // Realistic salary based on experience
-    let minSalary: number, maxSalary: number;
-    if (yearsExp < 2) {
-      minSalary = 40000 + Math.random() * 10000;
-      maxSalary = minSalary + 20000 + Math.random() * 10000;
-    } else if (yearsExp < 5) {
-      minSalary = 70000 + Math.random() * 20000;
-      maxSalary = minSalary + 30000 + Math.random() * 20000;
-    } else if (yearsExp < 10) {
-      minSalary = 100000 + Math.random() * 30000;
-      maxSalary = minSalary + 40000 + Math.random() * 30000;
-    } else {
-      minSalary = 150000 + Math.random() * 50000;
-      maxSalary = minSalary + 50000 + Math.random() * 50000;
+      // Create 2 entries per role (so 10 total per location)
+      for (let duplicate = 0; duplicate < 2; duplicate++) {
+        const yearsExp = Math.floor(Math.random() * 15);
+
+        // Salary based on role type and experience
+        let baseSalary = 70000;
+        if (role.includes("Senior") || role.includes("Staff")) baseSalary = 110000;
+        else if (role.includes("Junior")) baseSalary = 45000;
+        else if (role.includes("AI") || role.includes("Blockchain")) baseSalary = 95000;
+        else if (role.includes("Mobile") || role.includes("DevOps")) baseSalary = 85000;
+
+        const experienceBonus = yearsExp * 5000;
+        const randomVariation = Math.random() * 15000;
+        const minSalary = baseSalary + experienceBonus + randomVariation;
+        const maxSalary = minSalary + 25000 + Math.random() * 20000;
+
+        // Determine currency from location
+        let currency = "USD";
+        if (location.includes("UK") || location.includes("London")) currency = "GBP";
+        else if (location.includes("Germany") || location.includes("Berlin") || location.includes("Amsterdam")) currency = "EUR";
+        else if (location.includes("Singapore")) currency = "SGD";
+        else if (location.includes("Canada") || location.includes("Toronto")) currency = "CAD";
+        else if (location.includes("Australia")) currency = "AUD";
+        else if (location.includes("Japan")) currency = "JPY";
+        else if (location.includes("Ireland")) currency = "EUR";
+
+        data.push({
+          role,
+          location,
+          currency,
+          salaryMin: Math.round(minSalary / 1000) * 1000,
+          salaryMax: Math.round(maxSalary / 1000) * 1000,
+          yearsExp,
+          companySize: companySizes[Math.floor(Math.random() * companySizes.length)],
+          ipHash: `seed-${locationIndex}-${roleIndex}-${duplicate}-${Date.now()}`,
+          submittedAt: new Date(Date.now() - Math.random() * 86400000 * 30), // Last 30 days
+        });
+      }
     }
-
-    data.push({
-      role,
-      location,
-      currency: (() => {
-        const loc = (location || "").toLowerCase();
-        if (loc.includes("uk") || loc.includes("london")) return "GBP";
-        if (loc.includes("germany") || loc.includes("berlin") || loc.includes("france") || loc.includes("paris") || loc.includes("amsterdam")) return "EUR";
-        if (loc.includes("canada") || loc.includes("toronto")) return "CAD";
-        if (loc.includes("singapore")) return "SGD";
-        if (loc.includes("australia") || loc.includes("sydney")) return "AUD";
-        if (loc.includes("japan") || loc.includes("tokyo")) return "JPY";
-        if (loc.includes("us") || loc.includes("new york") || loc.includes("san francisco") || loc.includes("austin")) return "USD";
-        return "USD";
-      })(),
-      salaryMin: Math.round(minSalary / 1000) * 1000,
-      salaryMax: Math.round(maxSalary / 1000) * 1000,
-      yearsExp,
-      companySize: companySizes[i % companySizes.length],
-      ipHash: `seed-${i}-${Date.now()}`,
-      submittedAt: new Date(Date.now() - Math.random() * 86400000 * 30), // Last 30 days
-    });
-  }
+  });
 
   await db.insert(submissions).values(data);
   console.log(`Seeded ${data.length} entries`);

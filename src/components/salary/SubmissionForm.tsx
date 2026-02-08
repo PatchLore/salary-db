@@ -54,7 +54,7 @@ export function SubmissionForm() {
   };
 
   const locationValue = form.watch("location");
-  const currencyValue = form.watch("currency");
+  const currencyValue = form.watch("currency") || "USD";
 
   // Detect currency heuristically from location and set if user hasn't chosen one explicitly
   React.useEffect(() => {
@@ -69,9 +69,9 @@ export function SubmissionForm() {
     else detected = "USD";
 
     if ((!currencyValue || currencyValue === "USD") && detected) {
-      form.setValue("currency", detected as any);
+      form.setValue("currency", detected as "USD" | "EUR" | "GBP" | "CAD" | "SGD" | "AUD" | "JPY" | "Other");
     }
-  }, [locationValue]);
+  }, [locationValue, currencyValue, form]);
 
   async function onSubmit(values: SubmissionFormValues) {
     const res = await fetch("/api/submit", {
@@ -238,7 +238,7 @@ export function SubmissionForm() {
             {form.formState.errors.root.message}
           </p>
         )}
-        <Button type="submit" disabled={form.formState.isSubmitting}>
+        <Button type="submit" disabled={form.formState.isSubmitting} className="animate-pulse hover:animate-none">
           {form.formState.isSubmitting ? "Submitting…" : "Submit"}
         </Button>
       </form>
