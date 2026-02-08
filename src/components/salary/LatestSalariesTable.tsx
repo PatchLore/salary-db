@@ -94,7 +94,7 @@ export function LatestSalariesTable({ submissions }: LatestSalariesTableProps) {
 
       {/* Mobile cards */}
       <div className="md:hidden space-y-3">
-        {submissions.map((row, i) => (
+        {submissions.map((row) => (
           <Link
             key={row.id}
             href={`/${encodeURIComponent(row.role)}/${encodeURIComponent(row.location)}`}
