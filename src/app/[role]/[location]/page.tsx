@@ -46,7 +46,7 @@ export default async function RoleLocationPage({ params, searchParams }: PagePro
           location={decodedLocation}
           searchParams={search}
         />
-        <StatsCards role={decodedRole} location={decodedLocation} />
+        <StatsCards role={decodedRole} location={decodedLocation} searchParams={search} />
         <DataTable role={decodedRole} location={decodedLocation} searchParams={search} />
       </main>
     </div>

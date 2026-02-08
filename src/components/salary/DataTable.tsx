@@ -39,6 +39,14 @@ export async function DataTable({
     ? parsed.data
     : { page: 1, limit: 20, salaryMin: undefined, salaryMax: undefined, companySize: undefined };
 
+  // currency filter from searchParams (may be string or string[])
+  const rawCurrency = searchParams.currency;
+  const currencyFilters: string[] = Array.isArray(rawCurrency)
+    ? rawCurrency
+    : typeof rawCurrency === "string"
+    ? rawCurrency.split(",").map((s) => s)
+    : [];
+
   const conditions = [eq(submissions.role, role), eq(submissions.location, location)];
   if (salaryMin != null) conditions.push(gte(submissions.salaryMin, salaryMin));
   if (salaryMax != null) conditions.push(lte(submissions.salaryMax, salaryMax));
@@ -53,6 +61,7 @@ export async function DataTable({
       location: submissions.location,
       salaryMin: submissions.salaryMin,
       salaryMax: submissions.salaryMax,
+      currency: submissions.currency,
       yearsExp: submissions.yearsExp,
       companySize: submissions.companySize,
       submittedAt: submissions.submittedAt,
@@ -63,12 +72,25 @@ export async function DataTable({
     .limit(limit)
     .offset(offset);
 
+  const currencySymbols: Record<string, string> = {
+    USD: "$",
+    EUR: "€",
+    GBP: "£",
+    CAD: "C$",
+    SGD: "S$",
+    AUD: "A$",
+    JPY: "¥",
+    Other: "",
+  };
+
+  const filteredRows = currencyFilters.length > 0 ? rows.filter((r) => currencyFilters.includes(r.currency)) : rows;
+
   return (
     <div className="rounded-md border mt-6">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Salary range (£)</TableHead>
+            <TableHead>Salary range</TableHead>
             <TableHead>Years exp</TableHead>
             <TableHead>Company size</TableHead>
             <TableHead>Submitted</TableHead>
@@ -81,11 +103,11 @@ export async function DataTable({
                 No submissions yet. Be the first to submit.
               </TableCell>
             </TableRow>
-          ) : (
-            rows.map((row) => (
+            ) : (
+            filteredRows.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>
-                  {row.salaryMin.toLocaleString()} – {row.salaryMax.toLocaleString()}
+                  {currencySymbols[row.currency] ?? ""}{Math.round((row.salaryMin || 0) / 1000)}k - {currencySymbols[row.currency] ?? ""}{Math.round((row.salaryMax || 0) / 1000)}k {row.currency}
                 </TableCell>
                 <TableCell>{row.yearsExp}</TableCell>
                 <TableCell>{row.companySize}</TableCell>

@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    const { role, location, salaryMin, salaryMax, yearsExp, companySize } =
+    const { role, location, salaryMin, salaryMax, yearsExp, companySize, currency } =
       parsed.data;
     const ipHash = getIpHash(request);
 
@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
       location,
       salaryMin,
       salaryMax,
+      currency,
       yearsExp,
       companySize,
       ipHash,

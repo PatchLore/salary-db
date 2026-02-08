@@ -76,6 +76,17 @@ async function seed() {
     data.push({
       role,
       location,
+      currency: (() => {
+        const loc = (location || "").toLowerCase();
+        if (loc.includes("uk") || loc.includes("london")) return "GBP";
+        if (loc.includes("germany") || loc.includes("berlin") || loc.includes("france") || loc.includes("paris") || loc.includes("amsterdam")) return "EUR";
+        if (loc.includes("canada") || loc.includes("toronto")) return "CAD";
+        if (loc.includes("singapore")) return "SGD";
+        if (loc.includes("australia") || loc.includes("sydney")) return "AUD";
+        if (loc.includes("japan") || loc.includes("tokyo")) return "JPY";
+        if (loc.includes("us") || loc.includes("new york") || loc.includes("san francisco") || loc.includes("austin")) return "USD";
+        return "USD";
+      })(),
       salaryMin: Math.round(minSalary / 1000) * 1000,
       salaryMax: Math.round(maxSalary / 1000) * 1000,
       yearsExp,

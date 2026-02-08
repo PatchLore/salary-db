@@ -13,6 +13,17 @@ import {
 } from "@/components/ui/select";
 import { companySizeOptions } from "@/lib/validations";
 
+const currencyOptions = [
+  { value: "USD", label: "USD ($)" },
+  { value: "EUR", label: "EUR (€)" },
+  { value: "GBP", label: "GBP (£)" },
+  { value: "CAD", label: "CAD (C$)" },
+  { value: "SGD", label: "SGD (S$)" },
+  { value: "AUD", label: "AUD (A$)" },
+  { value: "JPY", label: "JPY (¥)" },
+  { value: "Other", label: "Other" },
+];
+
 type FilterBarProps = {
   role: string;
   location: string;
@@ -39,6 +50,12 @@ export function FilterBar({ role, location, searchParams }: FilterBarProps) {
   const salaryMin = typeof searchParams.salaryMin === "string" ? searchParams.salaryMin : "";
   const salaryMax = typeof searchParams.salaryMax === "string" ? searchParams.salaryMax : "";
   const companySize = typeof searchParams.companySize === "string" ? searchParams.companySize : "";
+  const rawCurrency = searchParams.currency;
+  const selectedCurrencies: string[] = Array.isArray(rawCurrency)
+    ? rawCurrency
+    : typeof rawCurrency === "string"
+    ? rawCurrency.split(",").filter(Boolean)
+    : [];
 
   return (
     <div className="flex flex-wrap items-end gap-4 mt-6">
@@ -79,6 +96,26 @@ export function FilterBar({ role, location, searchParams }: FilterBarProps) {
             ))}
           </SelectContent>
         </Select>
+      </div>
+      <div>
+        <label className="text-sm font-medium mb-1 block">Currency</label>
+        <div className="flex flex-wrap gap-2">
+          {currencyOptions.map((c) => (
+            <label key={c.value} className="inline-flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={selectedCurrencies.includes(c.value)}
+                onChange={(e) => {
+                  const next = new Set(selectedCurrencies);
+                  if (e.target.checked) next.add(c.value);
+                  else next.delete(c.value);
+                  updateParams({ currency: Array.from(next).join(",") || null });
+                }}
+              />
+              <span className="text-sm">{c.label}</span>
+            </label>
+          ))}
+        </div>
       </div>
       <Button
         variant="outline"

@@ -18,6 +18,7 @@ export const submissions = pgTable(
     location: varchar("location", { length: 255 }).notNull(),
     salaryMin: integer("salary_min").notNull(),
     salaryMax: integer("salary_max").notNull(),
+    currency: varchar("currency", { length: 3 }).default("USD").notNull(),
     yearsExp: integer("years_exp").notNull(),
     companySize: varchar("company_size", { length: 50 }).notNull(),
     submittedAt: timestamp("submitted_at").defaultNow().notNull(),
@@ -27,6 +28,7 @@ export const submissions = pgTable(
     index("submissions_role_idx").on(table.role),
     index("submissions_location_idx").on(table.location),
     index("submissions_salary_min_idx").on(table.salaryMin),
+    index("currency_idx").on(table.currency),
   ]
 );
 

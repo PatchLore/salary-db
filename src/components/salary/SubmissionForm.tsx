@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -32,6 +33,7 @@ export function SubmissionForm() {
     defaultValues: {
       role: "",
       location: "",
+      currency: "USD",
       salaryMin: 0,
       salaryMax: 0,
       yearsExp: 0,
@@ -39,6 +41,37 @@ export function SubmissionForm() {
       confirmData: false as unknown as true, // form starts unchecked; schema requires true on submit
     },
   });
+
+  const currencySymbols: Record<string, string> = {
+    USD: "$",
+    EUR: "€",
+    GBP: "£",
+    CAD: "C$",
+    SGD: "S$",
+    AUD: "A$",
+    JPY: "¥",
+    Other: "",
+  };
+
+  const locationValue = form.watch("location");
+  const currencyValue = form.watch("currency");
+
+  // Detect currency heuristically from location and set if user hasn't chosen one explicitly
+  React.useEffect(() => {
+    const loc = (locationValue || "").toLowerCase();
+    let detected = "USD";
+    if (loc.includes("uk") || loc.includes("london")) detected = "GBP";
+    else if (loc.includes("germany") || loc.includes("berlin") || loc.includes("france") || loc.includes("paris") || loc.includes("amsterdam")) detected = "EUR";
+    else if (loc.includes("canada") || loc.includes("toronto")) detected = "CAD";
+    else if (loc.includes("singapore")) detected = "SGD";
+    else if (loc.includes("australia") || loc.includes("sydney")) detected = "AUD";
+    else if (loc.includes("japan") || loc.includes("tokyo")) detected = "JPY";
+    else detected = "USD";
+
+    if ((!currencyValue || currencyValue === "USD") && detected) {
+      form.setValue("currency", detected as any);
+    }
+  }, [locationValue]);
 
   async function onSubmit(values: SubmissionFormValues) {
     const res = await fetch("/api/submit", {
@@ -87,32 +120,61 @@ export function SubmissionForm() {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="salaryMin"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Min salary (£)</FormLabel>
-              <FormControl>
-                <Input type="number" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="salaryMax"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Max salary (£)</FormLabel>
-              <FormControl>
-                <Input type="number" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <FormField
+            control={form.control}
+            name="salaryMin"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Min salary</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder={`${currencySymbols[form.getValues("currency") || "USD"]} Min`} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="salaryMax"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Max salary</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder={`${currencySymbols[form.getValues("currency") || "USD"]} Max`} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="currency"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Currency</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Currency" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="USD">USD ($)</SelectItem>
+                    <SelectItem value="EUR">EUR (€)</SelectItem>
+                    <SelectItem value="GBP">GBP (£)</SelectItem>
+                    <SelectItem value="CAD">CAD (C$)</SelectItem>
+                    <SelectItem value="SGD">SGD (S$)</SelectItem>
+                    <SelectItem value="AUD">AUD (A$)</SelectItem>
+                    <SelectItem value="JPY">JPY (¥)</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <FormField
           control={form.control}
           name="yearsExp"
