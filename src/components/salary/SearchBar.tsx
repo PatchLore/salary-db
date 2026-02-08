@@ -34,7 +34,6 @@ export function SearchBar({ locations }: SearchBarProps) {
     router.push(
       `/${encodeURIComponent(r)}/${encodeURIComponent(loc)}?yearsExpMin=${yearsExp[0]}`
     );
-    // Navigation will unmount; if not, reset after a delay
     setTimeout(() => setIsLoading(false), 2000);
   };
 
@@ -43,8 +42,9 @@ export function SearchBar({ locations }: SearchBarProps) {
       <form
         onSubmit={handleSearch}
         className={cn(
-          "max-w-7xl mx-auto rounded-xl shadow-lg border border-slate-200/80",
-          "bg-white/90 backdrop-blur-md p-4 sm:p-5"
+          "max-w-7xl mx-auto rounded-2xl shadow-xl border border-slate-200",
+          "bg-white backdrop-blur-md p-4 sm:p-5 transition-shadow duration-200",
+          "hover:shadow-2xl focus-within:shadow-2xl focus-within:ring-2 focus-within:ring-slate-900/10 focus-within:border-slate-300"
         )}
       >
         <div className="flex flex-col lg:flex-row gap-4 lg:items-end">
@@ -53,14 +53,14 @@ export function SearchBar({ locations }: SearchBarProps) {
               Role
             </label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 pointer-events-none" />
               <Input
                 id="hero-role"
                 type="search"
                 placeholder="e.g. Senior React Developer"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="pl-10 min-h-[44px] rounded-lg border-slate-200"
+                className="pl-10 min-h-[44px] rounded-lg border-slate-200 bg-slate-50/50 focus:bg-white transition-colors"
               />
             </div>
           </div>
@@ -71,7 +71,7 @@ export function SearchBar({ locations }: SearchBarProps) {
             <Select value={location || undefined} onValueChange={setLocation}>
               <SelectTrigger
                 id="hero-location"
-                className="min-h-[44px] rounded-lg border-slate-200"
+                className="min-h-[44px] rounded-lg border-slate-200 bg-slate-50/50 focus:bg-white transition-colors"
               >
                 <SelectValue placeholder="Select location" />
               </SelectTrigger>
@@ -88,7 +88,7 @@ export function SearchBar({ locations }: SearchBarProps) {
             <div className="flex items-center gap-3">
               <label
                 htmlFor="hero-exp"
-                className="text-sm font-medium text-slate-700 shrink-0"
+                className="text-sm font-semibold text-slate-800 shrink-0 min-w-[4rem]"
               >
                 Exp: {yearsExp[0]} yr
               </label>
@@ -105,7 +105,7 @@ export function SearchBar({ locations }: SearchBarProps) {
           </div>
           <Button
             type="submit"
-            className="bg-slate-900 hover:bg-slate-800 text-white min-h-[44px] rounded-lg px-6 shrink-0"
+            className="bg-slate-900 hover:bg-slate-800 text-white min-h-[44px] rounded-lg px-6 shrink-0 font-semibold transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
             disabled={isLoading}
           >
             {isLoading ? (
