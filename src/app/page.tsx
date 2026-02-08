@@ -3,12 +3,11 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { submissions } from "@/lib/schema";
 import { desc, sql } from "drizzle-orm";
-import { DisclaimerBanner } from "@/components/salary/DisclaimerBanner";
 import { HeroSection } from "@/components/salary/HeroSection";
 import { SearchBar } from "@/components/salary/SearchBar";
 import { LatestSalariesTable } from "@/components/salary/LatestSalariesTable";
 import { SalaryTableSkeleton } from "@/components/salary/SalaryTableSkeleton";
-import { LegalFooter } from "@/components/salary/LegalFooter";
+import { HomePageJsonLd } from "@/components/salary/HomePageJsonLd";
 import { Button } from "@/components/ui/button";
 
 async function getHomeData() {
@@ -47,6 +46,7 @@ async function HomeContent() {
     await getHomeData();
   return (
     <>
+      <HomePageJsonLd latest={latest} />
       <HeroSection
         totalSalaries={totalSalaries}
         locationCount={locationCount}
@@ -74,7 +74,6 @@ async function HomeContent() {
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      <DisclaimerBanner />
       <main className="flex-1">
         <Suspense
           fallback={
@@ -89,7 +88,6 @@ export default function Home() {
           <HomeContent />
         </Suspense>
       </main>
-      <LegalFooter />
     </div>
   );
 }

@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { submissions } from "@/lib/schema";
 import { submissionSchema } from "@/lib/validations";
+import { and, eq, gt, sql } from "drizzle-orm";
 import { createHash } from "crypto";
+
+const RATE_LIMIT_HOURS = 1;
 
 function getIpHash(request: NextRequest): string {
   const forwarded = request.headers.get("x-forwarded-for");
@@ -24,6 +28,25 @@ export async function POST(request: NextRequest) {
       parsed.data;
     const ipHash = getIpHash(request);
 
+    const oneHourAgo = new Date(Date.now() - RATE_LIMIT_HOURS * 60 * 60 * 1000);
+    const [recent] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(submissions)
+      .where(and(eq(submissions.ipHash, ipHash), gt(submissions.submittedAt, oneHourAgo)));
+    if ((recent?.count ?? 0) > 0) {
+      return NextResponse.json(
+        { error: "Rate limit exceeded. One submission per hour per IP." },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": "3600",
+            "X-RateLimit-Limit": "1",
+            "X-RateLimit-Remaining": "0",
+          },
+        }
+      );
+    }
+
     await db.insert(submissions).values({
       role,
       location,
@@ -33,6 +56,9 @@ export async function POST(request: NextRequest) {
       companySize,
       ipHash,
     });
+
+    revalidatePath("/");
+    revalidatePath("/browse");
 
     return NextResponse.json({ success: true });
   } catch (err) {

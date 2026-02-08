@@ -2,8 +2,6 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { submissions } from "@/lib/schema";
 import { sql } from "drizzle-orm";
-import { DisclaimerBanner } from "@/components/salary/DisclaimerBanner";
-import { LegalFooter } from "@/components/salary/LegalFooter";
 
 async function getBrowseData() {
   const rows = await db
@@ -22,7 +20,6 @@ export default async function BrowsePage() {
   const combos = await getBrowseData();
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      <DisclaimerBanner />
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-16">
         <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
           Browse all salaries
@@ -48,7 +45,6 @@ export default async function BrowsePage() {
           <p className="mt-8 text-slate-500">No data yet. Be the first to submit.</p>
         )}
       </main>
-      <LegalFooter />
     </div>
   );
 }

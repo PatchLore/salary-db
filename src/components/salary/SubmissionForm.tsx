@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { submissionSchema, companySizeOptions } from "@/lib/validations";
@@ -25,6 +26,7 @@ import {
 } from "@/components/ui/select";
 
 export function SubmissionForm() {
+  const router = useRouter();
   const form = useForm<SubmissionFormValues>({
     resolver: zodResolver(submissionSchema),
     defaultValues: {
@@ -44,12 +46,16 @@ export function SubmissionForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
     });
+    const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      form.setError("root", { message: data.error ?? "Submission failed" });
+      form.setError(
+        "root",
+        { message: res.status === 429 ? (data.error ?? "One submission per hour. Try again later.") : (data.error ?? "Submission failed") }
+      );
       return;
     }
     form.reset();
+    router.push("/");
   }
 
   return (

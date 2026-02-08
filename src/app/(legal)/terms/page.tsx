@@ -1,9 +1,14 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { legal } from "@/lib/legal";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: true },
+};
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen container mx-auto px-4 py-8 max-w-3xl">
+    <div className="min-h-screen container mx-auto px-4 py-8 max-w-3xl bg-slate-50">
       <h1 className="text-3xl font-bold tracking-tight">Terms of use</h1>
       <p className="text-muted-foreground mt-2">
         Jurisdiction: {legal.termsJurisdiction}. {legal.dataRetention}.

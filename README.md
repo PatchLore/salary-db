@@ -6,6 +6,8 @@ Niche developer salary database. Anonymous submissions. High-intent SEO traffic.
 **Deploy:** Vercel (Serverless Postgres)  
 **Legal:** England & Wales jurisdiction. No PII stored. GDPR compliant by design.
 
+**Live:** Add your production URL after deploy (e.g. `https://devsalaries.vercel.app`). Set `NEXT_PUBLIC_SITE_URL` in Vercel for sitemap/robots.
+
 ---
 
 ## Features
@@ -13,7 +15,7 @@ Niche developer salary database. Anonymous submissions. High-intent SEO traffic.
 - **Anonymous submissions:** No names, emails, or employers stored. IP hashed for rate limiting only.
 - **Legal safeguards:** "Not career advice" disclaimers on every page. User warrants right to share data.
 - **SEO optimized:** Dynamic role/location pages. Sitemap + structured data.
-- **Rate limiting:** IP hashed for spam protection.
+- **Rate limiting:** 1 submission per hour per IP (429 + `Retry-After`).
 - **Mobile first:** Dark mode, touch-friendly.
 
 ---
