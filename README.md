@@ -1,25 +1,35 @@
-# Salary DB
+# DevSalaries.co
 
-Self-reported salary database by role and location. Browse submissions or contribute your own (anonymous, IP-hashed for rate limiting). Informational only — not professional career advice.
+Niche developer salary database. Anonymous submissions. High-intent SEO traffic.
 
-## Tech stack
+**Stack:** Next.js 14 + TypeScript + Drizzle ORM + Neon Postgres + shadcn/ui  
+**Deploy:** Vercel (Serverless Postgres)  
+**Legal:** England & Wales jurisdiction. No PII stored. GDPR compliant by design.
 
-- **Next.js 14** (App Router), TypeScript, Tailwind CSS
-- **Neon** (PostgreSQL), **Drizzle ORM**
-- **shadcn/ui**-style components, React Hook Form, Zod
+---
 
-## Getting started
+## Features
+
+- **Anonymous submissions:** No names, emails, or employers stored. IP hashed for rate limiting only.
+- **Legal safeguards:** "Not career advice" disclaimers on every page. User warrants right to share data.
+- **SEO optimized:** Dynamic role/location pages. Sitemap + structured data.
+- **Rate limiting:** IP hashed for spam protection.
+- **Mobile first:** Dark mode, touch-friendly.
+
+---
+
+## Local Setup
 
 ### Prerequisites
 
 - Node.js 18+
-- Neon PostgreSQL (or any Postgres) — get a connection string from [Neon](https://neon.tech)
+- Neon PostgreSQL — get a connection string from [Neon](https://neon.tech)
 
 ### Setup
 
 1. **Clone and install**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/PatchLore.git salary-db
+   git clone https://github.com/PatchLore/salary-db.git
    cd salary-db
    npm install
    ```
